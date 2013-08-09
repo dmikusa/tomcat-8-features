@@ -51,17 +51,6 @@
 					<textarea id="result" style="height: 5em;" placeholder="Demo output will be shown here"></textarea>
 				</div>
 			</div>
-			<div id="nbio-3">
-				<h3>Long Running Task</h3>
-				<p>This demo shows how to execute a long running task and show the results.</p>
-				<div>
-					<button id="run-demo" class="tiny button">Run Demo</button>
-					<progress id="progress" value="0" max="100"></progress>
-				</div>
-				<div>
-					<textarea id="result" style="height: 5em;" placeholder="Demo output will be shown here"></textarea>
-				</div>
-			</div>
 		</div>
 	</div> 
 
@@ -88,32 +77,9 @@
 					nbio2.find("#result").text("You said: " + data);	
 				});
 		});
-		// Look at how to stream chunked response
-		//  https://github.com/englercj/jquery-ajax-progress/blob/master/js/jquery.ajax-progress.js
-		//  http://stackoverflow.com/questions/6789703/how-to-write-javascript-in-client-side-to-receive-and-parse-chunked-response-i
-		// Response Flow [START.........(100 times)......END]
-		// Update progress bar with task run time
 	</script>
 
 	<script src="<c:url value="/js/foundation.min.js"/>"></script>
-	<script src="<c:url value="/js/foundation/foundation.alerts.js"/>"></script>
-	<!--
-	  <script src="js/foundation/foundation.js"></script>
-	  <script src="js/foundation/foundation.clearing.js"></script>
-	  <script src="js/foundation/foundation.cookie.js"></script>
-	  <script src="js/foundation/foundation.dropdown.js"></script>
-	  <script src="js/foundation/foundation.forms.js"></script>
-	  <script src="js/foundation/foundation.joyride.js"></script>
-	  <script src="js/foundation/foundation.magellan.js"></script>
-	  <script src="js/foundation/foundation.orbit.js"></script>
-	  <script src="js/foundation/foundation.reveal.js"></script>
-	  <script src="js/foundation/foundation.section.js"></script>
-	  <script src="js/foundation/foundation.tooltips.js"></script>
-	  <script src="js/foundation/foundation.topbar.js"></script>
-	  <script src="js/foundation/foundation.interchange.js"></script>
-	  <script src="js/foundation/foundation.placeholder.js"></script>
-	  <script src="js/foundation/foundation.abide.js"></script>
-	  -->
 	<script>
 	    $(document).foundation();
   	</script>
