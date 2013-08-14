@@ -2,6 +2,8 @@ package com.pivotal.demos.el;
 
 import java.util.Date;
 
+import javax.el.LambdaExpression;
+
 public class Person {
 	private String name;
 	private String address;
@@ -47,7 +49,11 @@ public class Person {
 	public void setAge(int age) {
 		this.age = age;
 	}
-
+	
+	public boolean canDrink(LambdaExpression isOldEnough) {
+		return (boolean) isOldEnough.invoke(this.age);
+	}
+	
 	public Date getDob() {
 		return dob;
 	}

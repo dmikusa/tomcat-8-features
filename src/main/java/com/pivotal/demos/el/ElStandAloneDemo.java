@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.el.ELProcessor;
+import javax.el.LambdaExpression;
 
 public class ElStandAloneDemo {
 	
@@ -15,14 +16,20 @@ public class ElStandAloneDemo {
 	
 	public static void main(String[] args) throws Exception {
 		ElStandAloneDemo demo = new ElStandAloneDemo();
-		demo.setupAndUse();
+		demo.setupAndUseDemo();
 		demo.collectionsDemo();
+		demo.lambdasDemo();
 	}
 	
 	/**
 	 * Simple demonstration of setting up and using EL in a stand-alone environment
 	 */
-	public void setupAndUse() {
+	public void setupAndUseDemo() {
+		System.out.println();
+		System.out.println("--------------------------------------------------------------------------------------");
+		System.out.println("     Simple EL Demo");
+		System.out.println("--------------------------------------------------------------------------------------");
+		
 		// 1. Create an ELProcessor, provides the API for using EL
 		ELProcessor processor = new ELProcessor();
 		
@@ -38,7 +45,12 @@ public class ElStandAloneDemo {
 	 */
 	@SuppressWarnings("unchecked")
 	public void collectionsDemo() {
-		// 1. Create an ELProcessor, provides the API for using EL
+		System.out.println();
+		System.out.println("--------------------------------------------------------------------------------------");
+		System.out.println("     Collections / Streams Demo");
+		System.out.println("--------------------------------------------------------------------------------------");
+		
+		// Create an ELProcessor, provides the API for using EL
 		ELProcessor processor = new ELProcessor();
 		processor.defineBean("out", System.out);
 		processor.defineBean("person", this.person);
@@ -96,15 +108,56 @@ public class ElStandAloneDemo {
 	}
 	
 	/**
+	 * Demonstration of Lambdas
+	 */
+	public void lambdasDemo() {
+		System.out.println();
+		System.out.println("--------------------------------------------------------------------------------------");
+		System.out.println("     Lambda Demo");
+		System.out.println("--------------------------------------------------------------------------------------");
+		// Create an ELProcessor, provides the API for using EL
+		ELProcessor processor = new ELProcessor();
+		processor.defineBean("out", System.out);
+		processor.defineBean("person", this.person);
+
+		// Basic Lambda Evaluations
+		System.out.println("Returns 64 -> " + processor.eval("()->64"));
+		System.out.println("Returns x+1 where x=1 -> " + processor.eval("(x->x+1)(1)")); // (..) not required with one arg
+		System.out.println("Returns x+y where x=1 and y=3 -> " + processor.eval("((x,y)->x+y)(1,3)"));
+		
+		// Can be invoked immediately (like previous example) or stored and evaluated later
+		System.out.println("Square: " + processor.eval("sq = x->x*x; sq(5)"));
+		System.out.println("Factorial: " + processor.eval("fact = n -> n==0? 1: n*fact(n-1); fact(5)"));
+		
+		// Can be used by custom classes and called via EL
+		System.out.println("Can drink in the US: " + processor.eval("person.canDrink(age -> age >= 21)"));
+		System.out.println("Can drink in the Canada: " + processor.eval("person.canDrink(age -> age >= 19)"));
+		System.out.println("Can drink in the Germany: " + processor.eval("person.canDrink(age -> age >= 16)"));
+
+		// Can be used in Java by calling LambdaExpression.invoke(..)
+		LambdaExpression cube = (LambdaExpression) processor.eval("x -> x*x*x");
+		System.out.println("Cube: " + cube.invoke(3));
+		
+		// Lambda expressions can be nested
+		System.out.println("Cube Different: " + processor.eval("cu = x -> (y -> y*y)(x) * x; cu(4)"));
+		
+		// Scope of args is the body of the lambda expression
+		System.out.println("Cube Different Again: " + processor.eval("cu = x -> (()-> x*x) * x; cu(4)"));
+		
+		// Args in nested scope with same name, hide args or expressions of same name
+		System.out.println("Cube Fail: " + processor.eval("cu = x -> ((x)-> x*x)(1) * x; cu(4)"));
+	}
+	
+	/**
 	 * Creates data used by the demos.
 	 */
 	public ElStandAloneDemo() {
 		try {
 			this.person = new Person(
-								"Homer Simpson", 
-								"742 Evergreen Terrace",
-								39,
-								new SimpleDateFormat("YYYY-MM-DD").parse("1956-05-12"));
+							"Homer Simpson", 
+							"742 Evergreen Terrace",
+							39,
+							new SimpleDateFormat("YYYY-MM-DD").parse("1956-05-12"));
 		} catch(ParseException ex) { /* ignore */ }
 	}
 }
