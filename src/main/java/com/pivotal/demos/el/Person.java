@@ -5,6 +5,8 @@ import java.util.Date;
 import javax.el.LambdaExpression;
 
 public class Person {
+	public static final String DEFAULT_GREETING = "Hello World!";
+
 	private String name;
 	private String address;
 	private int age;
@@ -26,6 +28,10 @@ public class Person {
 				+ ", dob=" + dob + "]";
 	}
 	
+	public Person me() {
+		return this;
+	}
+
 	public String getName() {
 		return name;
 	}
@@ -62,4 +68,7 @@ public class Person {
 		this.dob = dob;
 	}
 	
+	public static int add(int x, int y) {
+		return x + y;
+	}
 }
