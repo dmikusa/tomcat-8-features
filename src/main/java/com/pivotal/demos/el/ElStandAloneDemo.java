@@ -2,6 +2,7 @@ package com.pivotal.demos.el;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +20,7 @@ public class ElStandAloneDemo {
 		demo.setupAndUseDemo();
 		demo.collectionsDemo();
 		demo.lambdasDemo();
+		demo.smallChangesDemo();
 	}
 	
 	/**
@@ -148,6 +150,52 @@ public class ElStandAloneDemo {
 		System.out.println("Cube Fail: " + processor.eval("cu = x -> ((x)-> x*x)(1) * x; cu(4)"));
 	}
 	
+	/**
+	 * Demo of various small changes
+	 */
+	public void smallChangesDemo() {
+		System.out.println();
+		System.out.println("--------------------------------------------------------------------------------------");
+		System.out.println("     Small Changes Demo");
+		System.out.println("--------------------------------------------------------------------------------------");
+
+		// Create an ELProcessor, provides the API for using EL
+		ELProcessor processor = new ELProcessor();
+		processor.defineBean("out", System.out);
+		processor.defineBean("person", this.person);
+
+		// Import Person, by default ELContext only import "java.lang.*" (used by static access below)
+		processor.getELManager().importClass(Date.class.getName());
+		processor.getELManager().importClass(Person.class.getName());
+
+		// String concatenation ( + and cat have been removed)
+		System.out.println("Concat(abc, def): " + processor.eval("'abc' += 'def'"));
+
+		// Constructors & New Objects
+		// TODO: figure out why constructor is not working
+//		System.out.println("new Boolean(true): " + processor.eval("Boolean(true)"));
+//		System.out.println("new Integer('100'): " + processor.eval("Integer('100')"));
+//		System.out.println("new Date(): " + processor.eval("Date()"));
+
+		// Basic Assignments
+		System.out.println("Assigning value to 'test': " + processor.eval("test = 'Hello World!'"));
+		System.out.println("Get value of test with Java: " + processor.getValue("test", String.class));
+		System.out.println("Get value of test with EL: " + processor.eval("test"));
+
+		// Assignment can also invoke method as long as it returns an object
+		System.out.println("Get Name: " + processor.eval("person.me().dob"));
+//		System.out.println("Update DOB: " + processor.eval("person.dob = Date(person.dob.time + 86400000)"));
+		System.out.println("Get Name: " + processor.eval("person.dob"));
+
+		// Multiple statements
+		System.out.println("Only displays last result: " + processor.eval("x = 5; 'Hi!'; 1 + 1; x = x + 5; x"));
+
+		// Static Fields & Methods
+		System.out.println("Static Field: " + processor.eval("Boolean.TRUE"));
+		System.out.println("Custom Static Field: " + processor.eval("Person.DEFAULT_GREETING"));
+		System.out.println("Static Method add(1,1): " + processor.eval("Person.add(1,1)"));
+	}
+
 	/**
 	 * Creates data used by the demos.
 	 */
