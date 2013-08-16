@@ -51,6 +51,23 @@
 					<textarea id="result" style="height: 5em;" placeholder="Demo output will be shown here"></textarea>
 				</div>
 			</div>
+			<div id="nbio-3">
+                <h3>Random Data</h3>
+                <p>Ask the server for some random characters.</p>
+                <div class="row collapse">
+                    <form>
+                        <div class="large-5 columns">
+                            <button id="run-demo" class="button prefix">How many characters do you want?</button>
+                        </div>
+                        <div class="large-7 columns">
+                            <input type="text" id="data" name="data" placeholder="???" />
+                        </div>
+                    </form>
+                </div>
+                <div>
+                    <textarea id="result" style="height: 5em;" placeholder="Demo output will be shown here"></textarea>
+                </div>
+            </div>
 		</div>
 	</div> 
 
@@ -61,6 +78,16 @@
 	</script>
 	
 	<script>
+	    function postAndGetResult(url, block) {
+	        block.find("#run-demo").click(function(e) {
+	            e.preventDefault();
+	            $.post(url,
+	                block.find("#data").val(),
+	                function(data) {
+	                    block.find("#result").text("You said: " + data);
+	                });
+	        });
+	    }
 		var nbio1 = $("#nbio-1");
 		nbio1.find("#run-demo").click(function() {
 			$.get('<c:url value="/non-blocking-io/HelloNbioServlet" />',
@@ -68,15 +95,8 @@
 				  nbio1.find("#result").text("Server Says: " + data);
 				});
 		});
-		var nbio2 = $("#nbio-2");
-		nbio2.find("#run-demo").click(function(e) {
-			e.preventDefault();
-			$.post('<c:url value="/non-blocking-io/EchoNbioServlet" />',
-				nbio2.find("#data").val(),
-    			function(data) {
-					nbio2.find("#result").text("You said: " + data);	
-				});
-		});
+		postAndGetResult('<c:url value="/non-blocking-io/EchoNbioServlet" />', $("#nbio-2"));
+		postAndGetResult('<c:url value="/non-blocking-io/RandomDataNbioServlet" />', $("#nbio-3"));
 	</script>
 
 	<script src="<c:url value="/js/foundation.min.js"/>"></script>
