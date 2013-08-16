@@ -18,73 +18,83 @@ import javax.servlet.http.HttpServletResponse;
  */
 @WebServlet(urlPatterns="/non-blocking-io/EchoNbioServlet", asyncSupported=true)
 public class EchoNbioServlet extends HttpServlet  {
-	
+
 	private static final long serialVersionUID = -6167956299941229517L;
+
+	private static class EchoReadListener implements ReadListener {
+		private AsyncContext context;
+		private StringBuilder data = new StringBuilder();
+
+		public EchoReadListener(AsyncContext context) {
+			this.context = context;
+		}
+
+		public void onDataAvailable() throws IOException {
+			// 3. Read all the data that is available, may be called multiple times
+			ServletInputStream input = context.getRequest().getInputStream();
+			try {
+	            byte[] b = new byte[8192];
+	            int read = 0;
+	            do {
+	                read = input.read(b);
+	                if (read == -1) {
+	                    break;
+	                }
+	                data.append(new String(b, 0, read));
+	                System.out.println("Buffer increased to [" + data.length() + "] characters");
+	            } while (input.isReady());
+	        } catch (Exception ex) {
+	            ex.printStackTrace(System.err);
+	            context.complete();
+	        }
+		}
+
+		public void onAllDataRead() throws IOException {
+			// 4. All Data Read, add WriteListener
+			context.getResponse().getOutputStream().setWriteListener(
+								new EchoWriteListener(context, data.toString()));
+		}
+
+		public void onError(Throwable ex) {
+			ex.printStackTrace(System.err);
+			context.complete();
+		}
+
+	}
+
+	private static class EchoWriteListener implements WriteListener {
+		private AsyncContext context;
+		private String data;
+
+		public EchoWriteListener(AsyncContext context, String data) {
+			this.context = context;
+			this.data = data;
+		}
+
+		public void onWritePossible() throws IOException {
+			ServletOutputStream output = context.getResponse().getOutputStream();
+			// 5. Write output
+			if (output.isReady()) {
+				output.write(data.getBytes("utf-8"));
+			}
+
+			// 6. Call complete, to signal we are done
+			context.complete();
+		}
+
+		public void onError(Throwable throwable) {
+			throwable.printStackTrace(System.err);
+			context.complete();
+		}
+	}
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		// 1. Start Async
-		final AsyncContext asyncContext = req.startAsync();
-		final ServletInputStream servletInputStream = asyncContext.getRequest().getInputStream();
-		
+		AsyncContext context = req.startAsync();
+
 		// 2. Add Read Listener to get user's input
-		ReadListener listener = new ReadListener() {
-			
-			private StringBuilder sb = new StringBuilder();  // buffer user's request
-			
-			public void onDataAvailable() throws IOException {
-				// 4. Read all the data that is available, may be called multiple times
-				try {
-		            byte[] b = new byte[8192];
-		            int read = 0;
-		            do {
-		                read = servletInputStream.read(b);
-		                if (read == -1) {
-		                    break;
-		                }
-		                sb.append(new String(b, 0, read));
-		                System.out.println("Buffer is now [" + sb.length() + "] characters");
-		            } while (servletInputStream.isReady());
-		        } catch (Exception ex) {
-		            ex.printStackTrace(System.err);
-		            asyncContext.complete();
-		        }
-			}
-			
-			// 5. Called when all data has been read			
-			public void onAllDataRead() throws IOException {
-				final ServletOutputStream outputStream = asyncContext.getResponse().getOutputStream();
-				
-				final String output = sb.toString();
-				
-				// 6. Configure a write listener to echo the response
-				WriteListener listener = new WriteListener() {
-					public void onWritePossible() throws IOException {
-						// 7. Write output
-						if (outputStream.isReady()) {
-							outputStream.print(output);
-						}
-						
-						// 8. Call complete, to signal we are done
-						asyncContext.complete();
-					}
-					
-					public void onError(Throwable throwable) {
-						throwable.printStackTrace(System.err);
-						asyncContext.complete();
-					}
-				};
-				outputStream.setWriteListener(listener);
-			}
-			
-			public void onError(Throwable throwable) {
-				throwable.printStackTrace(System.err);
-				asyncContext.complete();
-			}
-		};
-		
-		// 3. Add listener, starts Non-blocking IO support
-		servletInputStream.setReadListener(listener);
+		context.getRequest().getInputStream().setReadListener(new EchoReadListener(context));
 	}
-	
+
 }
