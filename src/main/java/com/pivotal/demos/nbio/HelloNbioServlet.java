@@ -43,6 +43,5 @@ public class HelloNbioServlet extends HttpServlet {
 			}
 		};
 		outputStream.setWriteListener(listener);
-		listener.onWritePossible();   // Workaround for https://issues.apache.org/bugzilla/show_bug.cgi?id=55381
 	}
 }
