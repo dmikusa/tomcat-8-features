@@ -28,6 +28,7 @@
 			<p>Please select a demo from the list below.</p>
 			<div class="panel" style="padding-left: 2em;" >
 				<ul>
+					<li><a href="<c:url value="/el/" />">Expression Language</a></li>
 					<li><a href="<c:url value="/non-blocking-io/" />">Non-Blocking IO API</a></li>
 					<li><a href="<c:url value="/protocol-upgrade/" />">Protocol Upgrade</a></li>
 				</ul>
