@@ -17,25 +17,25 @@ public class EchoClient {
 	public static void main(String[] args) throws Exception {
 		EchoClient echoClient = new EchoClient();
 		Map<String, List<String>> resHeaders = new HashMap<>();
-//		System.out.println("Out [" + 
-//				echoClient.doPost(false, new EmptyBytesStreamer(), resHeaders, null) +
-//			"]");
-//		System.out.println("Out [" + 
-//				echoClient.doPost(false, new HelloBytesStreamer(), resHeaders, null) +
-//			"]");
+		System.out.println("Out [" + 
+				echoClient.doPost(false, new EmptyBytesStreamer(), resHeaders, null) +
+			"]");
+		System.out.println("Out [" + 
+				echoClient.doPost(false, new HelloBytesStreamer(), resHeaders, null) +
+			"]");
 		System.out.println("Out [" + 
 				echoClient.doPost(true, new RandomBytesStreamer(), resHeaders, null) +
 			"]");
-//		System.out.println("Out [" + 
-//				echoClient.doPost(false, new RandomBytesStreamer(512, 16), resHeaders, null) +
-//			"]");
-//		System.out.println("Out [" + 
-//				echoClient.doPost(false, new RandomBytesStreamer(1048576, 16), resHeaders, null) +
-//			"]");
+		System.out.println("Out [" + 
+				echoClient.doPost(false, new RandomBytesStreamer(512, 32, 1), resHeaders, null) +
+			"]");
+		System.out.println("Out [" + 
+				echoClient.doPost(false, new RandomBytesStreamer(1048576, 131072, 1), resHeaders, null) +
+			"]");
 	}
 	
 	private static final String DEFAULT_PATH = 
-			"http://localhost:8080/tomcat-8-demos/non-blocking-io/EchoNbioServlet";
+			"http://localhost:8080/tomcat-8-demos/non-blocking-io/EchoNbioServlet2";
 	
 	public String doPost(boolean stream, BytesStreamer streamer,
             Map<String, List<String>> reqHead,
@@ -160,10 +160,11 @@ public class EchoClient {
 		private int available = 10;
 		private int total = 10;
 		private int chunkSize = 1;
+		private int sleep = 0;
 		
 		public RandomBytesStreamer() {}
 		
-		public RandomBytesStreamer(int total, int chunkSize) {
+		public RandomBytesStreamer(int total, int chunkSize, int sleep) {
 			this.total = total;
 			this.available = total;
 			this.chunkSize = chunkSize;
@@ -185,11 +186,13 @@ public class EchoClient {
 			} catch (UnsupportedEncodingException e) {
 				data = e.getMessage().getBytes();
 			}
-			try {
-				System.out.println("Pausing...");
-				Thread.sleep(1 * 1000);
-			} catch (InterruptedException ex) {
-				// ignore
+			if (sleep > 0) {
+				try {
+					System.out.println("Sleeping...");
+					Thread.sleep(sleep * 1000);
+				} catch (InterruptedException ex) {
+					// ignore
+				}
 			}
 			return data;
 		}
