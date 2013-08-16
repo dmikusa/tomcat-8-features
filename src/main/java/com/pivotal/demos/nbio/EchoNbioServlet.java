@@ -13,6 +13,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+/**
+ * Reads in the complete request, buffering it, then writes it out
+ */
 @WebServlet(urlPatterns="/non-blocking-io/EchoNbioServlet", asyncSupported=true)
 public class EchoNbioServlet extends HttpServlet  {
 	
@@ -71,7 +74,6 @@ public class EchoNbioServlet extends HttpServlet  {
 					}
 				};
 				outputStream.setWriteListener(listener);
-				listener.onWritePossible();   // Workaround for https://issues.apache.org/bugzilla/show_bug.cgi?id=55381
 			}
 			
 			public void onError(Throwable throwable) {
@@ -82,7 +84,6 @@ public class EchoNbioServlet extends HttpServlet  {
 		
 		// 3. Add listener, starts Non-blocking IO support
 		servletInputStream.setReadListener(listener);
-		listener.onDataAvailable();   // Workaround for https://issues.apache.org/bugzilla/show_bug.cgi?id=55381
 	}
 	
 }
