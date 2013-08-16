@@ -18,8 +18,10 @@ public class EchoClient {
 		String tmp;
 		EchoClient echoClient = new EchoClient();
 		Map<String, List<String>> resHeaders = new HashMap<>();
-		System.out.println("Out [" + 
-				echoClient.doPost(false, new EmptyBytesStreamer(), resHeaders, null) +
+		// Empty request will cause an IllegalStateException, if streaming is "false".
+		//    https://issues.apache.org/bugzilla/show_bug.cgi?id=55438
+		System.out.println("Out [" +
+				echoClient.doPost(true, new EmptyBytesStreamer(), resHeaders, null) +
 			"]");
 		pauseRun();
 		System.out.println("Out [" + 
