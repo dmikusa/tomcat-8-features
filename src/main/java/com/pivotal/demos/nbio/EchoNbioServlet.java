@@ -43,6 +43,7 @@ public class EchoNbioServlet extends HttpServlet  {
 		                    break;
 		                }
 		                sb.append(new String(b, 0, read));
+		                System.out.println("Buffer is now [" + sb.length() + "] characters");
 		            } while (servletInputStream.isReady());
 		        } catch (Exception ex) {
 		            ex.printStackTrace(System.err);
