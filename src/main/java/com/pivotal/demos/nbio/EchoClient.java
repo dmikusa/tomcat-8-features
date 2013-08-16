@@ -24,15 +24,15 @@ public class EchoClient {
 				echoClient.doPost(true, new EmptyBytesStreamer(), resHeaders, null) +
 			"]");
 		pauseRun();
-		System.out.println("Out [" + 
+		System.out.println("Out [" +
 				echoClient.doPost(false, new HelloBytesStreamer(), resHeaders, null) +
 			"]");
 		pauseRun();
-		System.out.println("Out [" + 
+		System.out.println("Out [" +
 				echoClient.doPost(true, new RandomBytesStreamer(), resHeaders, null) +
 			"]");
 		pauseRun();
-		System.out.println("Out [" + 
+		System.out.println("Out [" +
 				echoClient.doPost(false, new RandomBytesStreamer(512, 32, 1), resHeaders, null) +
 			"]");
 		pauseRun();
@@ -42,7 +42,7 @@ public class EchoClient {
 		tmp = echoClient.doPost(true, new RandomBytesStreamer(1048576, 131072, 1), resHeaders, null);
 		System.out.println("Out [" + tmp.length() + "]");
 	}
-	
+
 	private static void pauseRun() {
 		System.out.println("Press enter to continue...");
 		try {
@@ -50,10 +50,10 @@ public class EchoClient {
 		} catch (IOException e) {
 		}
 	}
-	
-	private static final String DEFAULT_PATH = 
+
+	private static final String DEFAULT_PATH =
 			"http://localhost:8080/tomcat-8-demos/non-blocking-io/EchoNbioServlet";
-	
+
 	public String doPost(boolean stream, BytesStreamer streamer,
             Map<String, List<String>> reqHead,
             Map<String, List<String>> resHead) throws IOException
@@ -138,13 +138,13 @@ public class EchoClient {
         }
         return sb.toString();
 	}
-	
+
 	private static interface BytesStreamer {
 	    int getLength();
 	    int available();
 	    byte[] next();
 	}
-	
+
 	private static class EmptyBytesStreamer implements BytesStreamer {
 		public int getLength() {
 			return 0;
@@ -156,11 +156,11 @@ public class EchoClient {
 			return null;
 		}
 	}
-	
+
 	private static class HelloBytesStreamer implements BytesStreamer {
 		private byte[] data = "Hello World!".getBytes();
 		private int available = data.length;
-		
+
 		public int getLength() {
 			return data.length;
 		}
@@ -172,21 +172,21 @@ public class EchoClient {
 			return data;
 		}
 	}
-	
+
 	private static class RandomBytesStreamer implements BytesStreamer {
 		private int available = 10;
 		private int total = 10;
 		private int chunkSize = 1;
 		private int sleep = 0;
-		
+
 		public RandomBytesStreamer() {}
-		
+
 		public RandomBytesStreamer(int total, int chunkSize, int sleep) {
 			this.total = total;
 			this.available = total;
 			this.chunkSize = chunkSize;
 		}
-		
+
 		public int getLength() {
 			return total;
 		}
