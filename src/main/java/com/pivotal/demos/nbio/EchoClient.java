@@ -15,27 +15,42 @@ import org.apache.commons.lang3.RandomStringUtils;
 
 public class EchoClient {
 	public static void main(String[] args) throws Exception {
+		String tmp;
 		EchoClient echoClient = new EchoClient();
 		Map<String, List<String>> resHeaders = new HashMap<>();
 		System.out.println("Out [" + 
 				echoClient.doPost(false, new EmptyBytesStreamer(), resHeaders, null) +
 			"]");
+		pauseRun();
 		System.out.println("Out [" + 
 				echoClient.doPost(false, new HelloBytesStreamer(), resHeaders, null) +
 			"]");
+		pauseRun();
 		System.out.println("Out [" + 
 				echoClient.doPost(true, new RandomBytesStreamer(), resHeaders, null) +
 			"]");
+		pauseRun();
 		System.out.println("Out [" + 
 				echoClient.doPost(false, new RandomBytesStreamer(512, 32, 1), resHeaders, null) +
 			"]");
-		System.out.println("Out [" + 
-				echoClient.doPost(false, new RandomBytesStreamer(1048576, 131072, 1), resHeaders, null) +
-			"]");
+		pauseRun();
+		tmp = echoClient.doPost(false, new RandomBytesStreamer(1048576, 131072, 1), resHeaders, null);
+		System.out.println("Out [" + tmp.length() + "]");
+		pauseRun();
+		tmp = echoClient.doPost(true, new RandomBytesStreamer(1048576, 131072, 1), resHeaders, null);
+		System.out.println("Out [" + tmp.length() + "]");
+	}
+	
+	private static void pauseRun() {
+		System.out.println("Press enter to continue...");
+		try {
+			System.in.read();
+		} catch (IOException e) {
+		}
 	}
 	
 	private static final String DEFAULT_PATH = 
-			"http://localhost:8080/tomcat-8-demos/non-blocking-io/EchoNbioServlet2";
+			"http://localhost:8080/tomcat-8-demos/non-blocking-io/EchoNbioServlet";
 	
 	public String doPost(boolean stream, BytesStreamer streamer,
             Map<String, List<String>> reqHead,
@@ -181,7 +196,7 @@ public class EchoClient {
 			byte[] data;
 			try {
 				String tmp = RandomStringUtils.randomAlphanumeric(chunkSize);
-				System.out.println("Writing [" + tmp + "]");
+				//System.out.println("Writing [" + tmp + "]");
 				data = tmp.getBytes("utf-8");
 			} catch (UnsupportedEncodingException e) {
 				data = e.getMessage().getBytes();
