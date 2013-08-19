@@ -84,7 +84,7 @@
 	            $.post(url,
 	                block.find("#data").val(),
 	                function(data) {
-	                    block.find("#result").text("You said: " + data);
+	                    block.find("#result").text("Server Says: " + data);
 	                });
 	        });
 	    }
