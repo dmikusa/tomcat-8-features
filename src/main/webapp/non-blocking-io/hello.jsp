@@ -10,7 +10,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>Tomcat 8 Demos - EL</title>
+	<title>Tomcat 8 Demos - Non-Blocking IO API</title>
 	<link rel="stylesheet" href="<c:url value="/css/foundation.css"/>">
 	<script src="<c:url value="/js/vendor/custom.modernizr.js"/>"></script>
 </head>
@@ -20,32 +20,24 @@
 			<h2>Tomcat 8 Demos</h2>
 			<nav class="breadcrumbs" style="margin-bottom: 1em;">
 			  <a href="<c:url value="/" />">Home</a>
+			  <a href="<c:url value="/non-blocking-io/" />">Non-Blocking IO</a>
 			</nav>
 		</div>
 	</div>
 	<div class="row">
 		<div class="large-12 columns">
-			<h3>Expression Language Evaluator</h3>
-			<p>This pages present an interactive demonstration of the Expression Language 3.0.  Enter 
-				valid expression language commands into the box below or select one of the samples from
-				the menu on the right.</p>
+			<h3>Hello World!</h3>
+			<p>The typical "Hello World!" demo.  Uses an WriteListener to print 'Hello World!'.</p>
 		</div>
-	</div>
-	<div class="row">
-		<div class="large-9 columns">
-			<div>
-				<textarea id="expression" style="height: 15em; resize: none;" placeholder="Enter expression language code here"></textarea>
+		<div class="large-11 large-centered columns">
+			<div id="nbio">
+				<div>
+					<button id="run-demo" class="tiny button">Run Demo</button>
+				</div>
+				<div>
+					<textarea id="result" style="height: 5em;" placeholder="Demo output will be shown here"></textarea>
+				</div>
 			</div>
-			<div>
-				<button id="run-demo" class="tiny button">Run</button>
-			</div>
-		</div>
-		<div class="large-3 columns">
-			<select id="templates" size="20" style="height: 19.1em">
-				<option>Set</option>
-				<option>List</option>
-				<option>Map</option>
-			</select>
 		</div>
 	</div> 
 
@@ -54,12 +46,14 @@
 				+ ('__proto__' in {} ? '<c:url value="/js/vendor/zepto"/>' : '<c:url value="/js/vendor/jquery"/>')
 				+ '.js><\/script>')
 	</script>
-		
+	
 	<script>
-		$("#templates").click(function(e) {
-			$.get('<c:url value="/el/templates/" />' + $(e.target).val().toLowerCase() + '.txt', function(text) {
-				$("#expression").val(text);
-			});
+		var nbio = $("#nbio");
+		nbio.find("#run-demo").click(function() {
+			$.get('<c:url value="/non-blocking-io/HelloNbioServlet" />',
+				function(data) {
+				  nbio.find("#result").text("Server Says: " + data);
+				});
 		});
 	</script>
 
