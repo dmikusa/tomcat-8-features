@@ -77,6 +77,11 @@
 				<option>Lambda Nested</option>
 			</select>
 		</div>
+	</div>
+	<div class="row">
+		<div class="large-12 columns">
+			<textarea id="result" style="height: 5em;" placeholder="Result from evaluation will be displayed here"></textarea>
+		</div>
 	</div> 
 
 	<script>
@@ -89,6 +94,11 @@
 		$("#templates").click(function(e) {
 			$.get('<c:url value="/el/templates/" />' + $(e.target).val().toLowerCase().replace(/ /g, '-') + '.txt', function(text) {
 				$("#expression").val(text);
+			});
+		});
+		$("#run-demo").click(function(e) {
+			$.post('<c:url value="/el/ElEvaluationServlet" />',$("#expression").val(), function(result) {
+				$("#result").val(result);
 			});
 		});
 	</script>
