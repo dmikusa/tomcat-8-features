@@ -41,7 +41,7 @@ public class EchoNbioServlet extends HttpServlet  {
 	                    break;
 	                }
 	                data.append(new String(b, 0, read));
-	                System.out.println("Buffer increased to [" + data.length() + "] characters");
+	                System.out.println("Buffering [" + data.length() + "] characters");
 	            } while (input.isReady());
 	        } catch (Exception ex) {
 	            ex.printStackTrace(System.err);
