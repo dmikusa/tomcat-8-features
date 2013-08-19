@@ -45,6 +45,36 @@
 				<option>Set</option>
 				<option>List</option>
 				<option>Map</option>
+				<option>Assignment</option>
+				<option>String Concat</option>
+				<option>Static Fields</option>
+				<option>List Stream</option>
+				<option>Map Stream</option>
+				<option>Complex Stream</option>
+				<option>Map Operation</option>
+				<option>FlatMap Operation</option>
+				<option>Distinct Operation</option>
+				<option>Sorted Operation</option>
+				<option>Sorted with Comparator</option>
+				<option>ForEach Operation</option>
+				<option>Peek Operation</option>
+				<option>Limit Operation</option>
+				<option>SubStream Operation</option>
+				<option>Reduce Operation</option>
+				<option>Max Operation</option>
+				<option>Min Operation</option>
+				<option>Average Operation</option>
+				<option>Sum Operation</option>
+				<option>Count Operation</option>
+				<option>AnyMatch Operation</option>
+				<option>AllMatch Operation</option>
+				<option>NoneMatch Operation</option>
+				<option>FindFirst Operation</option>
+				<option>Lambda Static</option>
+				<option>Lambda Basic</option>
+				<option>Lambda Two Args</option>
+				<option>Lambda Assignment</option>
+				<option>Lambda Nested</option>
 			</select>
 		</div>
 	</div> 
@@ -57,7 +87,7 @@
 		
 	<script>
 		$("#templates").click(function(e) {
-			$.get('<c:url value="/el/templates/" />' + $(e.target).val().toLowerCase() + '.txt', function(text) {
+			$.get('<c:url value="/el/templates/" />' + $(e.target).val().toLowerCase().replaceAll(' ', '-') + '.txt', function(text) {
 				$("#expression").val(text);
 			});
 		});

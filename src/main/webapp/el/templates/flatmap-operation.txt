@@ -1,0 +1,1 @@
+['dog', 'cat', 'bird'].stream().flatMap(w->w.toCharArray().stream()).toList()

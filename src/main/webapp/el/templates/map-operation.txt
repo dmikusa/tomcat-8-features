@@ -1,0 +1,1 @@
+[1,2,3,4].stream().map(x->x*2).toList()
