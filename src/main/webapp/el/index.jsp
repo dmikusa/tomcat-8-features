@@ -87,7 +87,7 @@
 		
 	<script>
 		$("#templates").click(function(e) {
-			$.get('<c:url value="/el/templates/" />' + $(e.target).val().toLowerCase().replaceAll(' ', '-') + '.txt', function(text) {
+			$.get('<c:url value="/el/templates/" />' + $(e.target).val().toLowerCase().replace(/ /g, '-') + '.txt', function(text) {
 				$("#expression").val(text);
 			});
 		});
