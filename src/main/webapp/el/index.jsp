@@ -80,7 +80,12 @@
 	</div>
 	<div class="row">
 		<div class="large-12 columns">
-			<textarea id="result" style="height: 5em;" placeholder="Result from evaluation will be displayed here"></textarea>
+			<h4>Result of EL:</h4>
+			<textarea id="result" style="height: 5em; resize: vertical;" placeholder="Result from evaluation will be displayed here"></textarea>
+			<h4>Output Buffer:</h4>
+			<textarea id="buffer" style="height: 5em; resize: vertical;" placeholder="Any information written to 'out' will be displayed here"></textarea>
+			<h4>Context Beans:</h4>
+			<textarea id="beans" style="height: 5em; resize: vertical;" placeholder="Any beans that exist after excuting the EL will be displayed here"></textarea>
 		</div>
 	</div> 
 
@@ -98,7 +103,17 @@
 		});
 		$("#run-demo").click(function(e) {
 			$.post('<c:url value="/el/ElEvaluationServlet" />',$("#expression").val(), function(result) {
-				$("#result").val(result);
+				var resp = JSON.parse(result);
+				$("#result").val(resp.result);
+				$("#buffer").val(resp.out);
+				var beans = new Array();
+				for (var key in resp.context) {
+					if (key == "out") {
+						continue;
+					}
+					beans.push(key + " = " + resp.context[key]);
+				}
+				$("#beans").val(beans.join("\n"));
 			});
 		});
 	</script>
