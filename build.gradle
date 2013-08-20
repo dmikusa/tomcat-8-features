@@ -9,14 +9,19 @@ description = """Tomcat 8 "New Features" Demo"""
 sourceCompatibility = 1.7
 targetCompatibility = 1.7
 
+configurations {
+    provided
+    compile.extendsFrom provided
+}
+
 repositories {
-     maven { url 'https://repository.apache.org/service/local/repositories/snapshots/content'
-     maven { url 'http://repo.maven.apache.org/maven2'
+     maven { url 'https://repository.apache.org/service/local/repositories/snapshots/content' }
+     maven { url 'http://repo.maven.apache.org/maven2' }
 }
 
 dependencies {
-    compile 'jstl:jstl:1.2'
-    providedCompile 'org.apache.tomcat:tomcat-servlet-api:8.0-SNAPSHOT'
-    providedCompile 'org.apache.tomcat:tomcat-el-api:8.0-SNAPSHOT'
-    providedCompile 'org.apache.tomcat:tomcat-jasper-el:8.0-SNAPSHOT'
+    provided 'org.apache.tomcat:tomcat-servlet-api:8.0-SNAPSHOT'
+    provided 'org.apache.tomcat:tomcat-el-api:8.0-SNAPSHOT'
+    provided 'org.apache.tomcat:tomcat-jasper-el:8.0-SNAPSHOT'
+    provided 'jstl:jstl:1.2'
 }
