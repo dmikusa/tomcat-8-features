@@ -1,0 +1,31 @@
+apply plugin: 'java'
+apply plugin: 'war'
+
+group = 'com.gopivotal.demos'
+version = '0.0.1-SNAPSHOT'
+
+description = """Tomcat 8 "New Features" Demo"""
+
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+configurations {
+    provided
+    compile.extendsFrom provided
+}
+
+repositories {
+     maven { url 'https://repository.apache.org/service/local/repositories/snapshots/content' }
+     maven { url 'http://repo.maven.apache.org/maven2' }
+}
+
+dependencies {
+    provided 'org.apache.tomcat:tomcat-servlet-api:8.0-SNAPSHOT'
+    provided 'org.apache.tomcat:tomcat-el-api:8.0-SNAPSHOT'
+    provided 'org.apache.tomcat:tomcat-jasper-el:8.0-SNAPSHOT'
+    compile 'jstl:jstl:1.2'
+}
+
+war {
+    classpath = configurations.compile - configurations.provided
+}

@@ -1,4 +1,8 @@
-target
 .classpath
+.DS_Store
+.gradle
 .project
 .settings
+target
+bin
+build
