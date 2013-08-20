@@ -1,7 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>com.pivotal.demos</groupId>
+  <groupId>com.gopivotal.demos</groupId>
   <artifactId>tomcat-8-demos</artifactId>
   <packaging>war</packaging>
   <version>0.0.1-SNAPSHOT</version>
@@ -12,20 +12,20 @@
   	<dependency>
   		<groupId>org.apache.tomcat</groupId>
   		<artifactId>tomcat-servlet-api</artifactId>
-        <version>8.0.0-SNAPSHOT</version>
+        <version>8.0-SNAPSHOT</version>
   		<scope>provided</scope>
   	</dependency>
 
   	<dependency>
   		<groupId>org.apache.tomcat</groupId>
   		<artifactId>tomcat-el-api</artifactId>
-        <version>8.0.0-SNAPSHOT</version>
+        <version>8.0-SNAPSHOT</version>
   		<scope>provided</scope>
   	</dependency>
   	<dependency>
   		<groupId>org.apache.tomcat</groupId>
   		<artifactId>tomcat-jasper-el</artifactId>
-        <version>8.0.0-SNAPSHOT</version>
+        <version>8.0-SNAPSHOT</version>
   		<scope>provided</scope>
   	</dependency>
 
@@ -49,6 +49,13 @@
 <!-- 			<url>https://maven.java.net/content/repositories/releases</url> -->
 <!-- 		</repository> -->
 <!-- 	</repositories> -->
+
+  <repositories>
+    <repository>
+      <id>apache-snapshots</id>
+      <url>https://repository.apache.org/service/local/repositories/snapshots/content</url>
+    </repository>
+  </repositories>
 
   <build>
     <finalName>tomcat-8-demos</finalName>
