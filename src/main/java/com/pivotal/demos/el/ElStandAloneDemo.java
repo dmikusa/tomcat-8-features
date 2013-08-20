@@ -172,10 +172,9 @@ public class ElStandAloneDemo {
 		System.out.println("Concat(abc, def): " + processor.eval("'abc' += 'def'"));
 
 		// Constructors & New Objects
-		// BUG: constructor is not working at this time
-//		System.out.println("new Boolean(true): " + processor.eval("Boolean(true)"));
-//		System.out.println("new Integer('100'): " + processor.eval("Integer('100')"));
-//		System.out.println("new Date(): " + processor.eval("Date()"));
+		System.out.println("new Boolean(true): " + processor.eval("Boolean(true)"));
+		System.out.println("new Integer('100'): " + processor.eval("Integer('100')"));
+		System.out.println("new Date(): " + processor.eval("Date()"));
 
 		// Basic Assignments
 		System.out.println("Assigning value to 'test': " + processor.eval("test = 'Hello World!'"));
@@ -184,7 +183,7 @@ public class ElStandAloneDemo {
 
 		// Assignment can also invoke method as long as it returns an object
 		System.out.println("Get Name: " + processor.eval("person.me().dob"));
-//		System.out.println("Update DOB: " + processor.eval("person.dob = Date(person.dob.time + 86400000)"));
+		System.out.println("Update DOB: " + processor.eval("person.dob = Date(person.dob.time + 86400000)"));
 		System.out.println("Get Name: " + processor.eval("person.dob"));
 
 		// Multiple statements
