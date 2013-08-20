@@ -11,7 +11,7 @@ public class Person {
 	private String address;
 	private int age;
 	private Date dob;
-	
+
 	public Person() {
 	}
 
@@ -27,7 +27,7 @@ public class Person {
 		return "Person [name=" + name + ", address=" + address + ", age=" + age
 				+ ", dob=" + dob + "]";
 	}
-	
+
 	public Person me() {
 		return this;
 	}
@@ -55,11 +55,11 @@ public class Person {
 	public void setAge(int age) {
 		this.age = age;
 	}
-	
+
 	public boolean canDrink(LambdaExpression isOldEnough) {
 		return (boolean) isOldEnough.invoke(this.age);
 	}
-	
+
 	public Date getDob() {
 		return dob;
 	}
@@ -67,8 +67,8 @@ public class Person {
 	public void setDob(Date dob) {
 		this.dob = dob;
 	}
-	
-	public static int add(int x, int y) {
+
+	public static long add(long x, long y) {
 		return x + y;
 	}
 }
