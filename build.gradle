@@ -1,5 +1,5 @@
 apply plugin: 'java'
-apply plugin: 'maven'
+apply plugin: 'war'
 
 group = 'com.gopivotal.demos'
 version = '0.0.1-SNAPSHOT'
@@ -23,5 +23,9 @@ dependencies {
     provided 'org.apache.tomcat:tomcat-servlet-api:8.0-SNAPSHOT'
     provided 'org.apache.tomcat:tomcat-el-api:8.0-SNAPSHOT'
     provided 'org.apache.tomcat:tomcat-jasper-el:8.0-SNAPSHOT'
-    provided 'jstl:jstl:1.2'
+    compile 'jstl:jstl:1.2'
+}
+
+war {
+    classpath = configurations.compile - configurations.provided
 }
