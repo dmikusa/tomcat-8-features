@@ -18,29 +18,33 @@ public class EchoClient {
 		String tmp;
 		EchoClient echoClient = new EchoClient();
 		Map<String, List<String>> resHeaders = new HashMap<>();
-		// Empty request will cause an IllegalStateException, if streaming is "false".
-		//    https://issues.apache.org/bugzilla/show_bug.cgi?id=55438
-		System.out.println("Out [" +
-				echoClient.doPost(true, new EmptyBytesStreamer(), resHeaders, null) +
+
+		System.out.println("Sending nothing.  Response [" +
+				echoClient.doPost(false, new EmptyBytesStreamer(), resHeaders, null) +
 			"]");
 		pauseRun();
-		System.out.println("Out [" +
+
+		System.out.println("Sending 'Hello World!'.  Response [" +
 				echoClient.doPost(false, new HelloBytesStreamer(), resHeaders, null) +
 			"]");
 		pauseRun();
-		System.out.println("Out [" +
+
+		System.out.println("Sending 10 random characters.  Response [" +
 				echoClient.doPost(true, new RandomBytesStreamer(), resHeaders, null) +
 			"]");
 		pauseRun();
-		System.out.println("Out [" +
+
+		System.out.println("Sending 512 random characters.  Response [" +
 				echoClient.doPost(false, new RandomBytesStreamer(512, 32, 1), resHeaders, null) +
 			"]");
 		pauseRun();
-		tmp = echoClient.doPost(false, new RandomBytesStreamer(1048576, 131072, 1), resHeaders, null);
-		System.out.println("Out [" + tmp.length() + "]");
+
+		tmp = echoClient.doPost(false, new RandomBytesStreamer(1_000_000, 131072, 1), resHeaders, null);
+		System.out.println("Sending a million random characters.  Got  [" + tmp.length() + "] characters back.");
 		pauseRun();
+
 		tmp = echoClient.doPost(true, new RandomBytesStreamer(1048576, 131072, 1), resHeaders, null);
-		System.out.println("Out [" + tmp.length() + "]");
+		System.out.println("Streaming a million random characters.  Got [" + tmp.length() + "] characters back.");
 	}
 
 	private static void pauseRun() {
