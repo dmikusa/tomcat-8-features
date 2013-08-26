@@ -26,12 +26,12 @@
 	<div class="row">
 		<div class="large-12 columns">
 			<h3>Protocol Upgrade Demo</h3>
-			<p>This section demonstrates the Protocol Upgrade feature of Tomcat 8 / Servlet 3.1.</p>
+			<p>This section demonstrates the Protocol Upgrade feature of Tomcat 8 / Servlet 3.1.  This section does not have a web-based demo.  The 
+				following instructions show how to run the terminal-based demo.</p>
 		</div>
 	</div>
 	<div class="row">
 		<div class="large-11 large-centered columns">
-			<p>This section does not have a web-based demo.  The following instructions show how to run the terminal-based demo.</p>
 			<ol>
 				<li>In a terminal, change directory to the location where you have downloaded the demo package.</li>
 				<li>Run <code>mvn package</code>.</li>
