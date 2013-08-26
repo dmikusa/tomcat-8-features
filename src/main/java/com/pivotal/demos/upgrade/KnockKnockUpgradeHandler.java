@@ -32,7 +32,7 @@ public class KnockKnockUpgradeHandler implements HttpUpgradeHandler {
 				System.out.println("Read punchline [" + punchLine + "]");
 
 				// end the session
-				output.write("Bye!\r\n".getBytes());
+				output.write("Lol. Bye!\r\n".getBytes());
 				output.flush();
 			} else {
 				output.write("Invalid greeting, please follow proper etiquette.".getBytes());

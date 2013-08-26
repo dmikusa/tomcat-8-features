@@ -8,6 +8,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 public class KnockKnockClient {
+
 	public static void main(String[] args) {
 		new KnockKnockClient().run();
 	}
@@ -29,26 +30,29 @@ public class KnockKnockClient {
 			System.out.println(" done.");
 
 			// read response
-			System.out.println("Response from server:");
+			System.out.println("Response from server:\n");
 			while (true) {
 				String line = resp.readLine();
-				System.out.println(line);
+				System.out.println("  " + line);
 				if ("".equals(line)) {
 					break;
 				}
 			}
 
 			// interact with upgrade
-			System.out.println("Initiating knock-knock protocol...");
+			System.out.println("Initiating knock-knock protocol...\n");
+			System.out.println("  Saying: Knock Knock");
 			req.println("Knock Knock");
 			req.flush();
-			System.out.println(resp.readLine());
+			System.out.println("  Reply: " + resp.readLine());
+			System.out.println("  Saying: Madam");
 			req.println("Madam");
 			req.flush();
-			System.out.println(resp.readLine());
+			System.out.println("  Reply: " + resp.readLine());
+			System.out.println("  Saying: Madam foot got caught in the door!");
 			req.println("Madam foot got caught in the door!");
 			req.flush();
-			System.out.println(resp.readLine());
+			System.out.println("  Reply: " + resp.readLine() + "\n");
 			System.out.println("Done!");
 		} catch (IOException e) {
 			e.printStackTrace();

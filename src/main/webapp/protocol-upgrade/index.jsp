@@ -31,7 +31,15 @@
 	</div>
 	<div class="row">
 		<div class="large-11 large-centered columns">
-			
+			<p>This section does not have a web-based demo.  The following instructions show how to run the terminal-based demo.</p>
+			<ol>
+				<li>In a terminal, change directory to the location where you have downloaded the demo package.</li>
+				<li>Run <code>mvn package</code>.</li>
+				<li>Deploy the generated WAR file to your Tomcat 8 server.</li>
+				<li>Run <code>mvn -q exec:java -Dexec.mainClass="com.pivotal.demos.upgrade.KnockKnockClient"</code>.</li>
+				<li>The output should show the interaction between the client and the server, which are using the "knock-knock" 
+					protocol defined in com.pivotal.demos.upgrade.KnockKnockUpgradeHandler.</li>
+			</ol>
 		</div>
 	</div>
 
