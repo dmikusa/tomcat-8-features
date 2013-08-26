@@ -18,7 +18,7 @@ public class KnockKnockUpgradeHandler implements HttpUpgradeHandler {
 		) {
 			// read the client's standard greeting
 			String greeting = input.readLine();
-			if ("knock knock".equals(greeting.toLowerCase())) {
+			if (greeting != null && "knock knock".equals(greeting.toLowerCase())) {
 				output.write("Who's there?\r\n".getBytes());
 				output.flush();
 
