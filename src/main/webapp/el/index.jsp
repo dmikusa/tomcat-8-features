@@ -48,6 +48,7 @@
 				<option>Assignment</option>
 				<option>String Concat</option>
 				<option>Static Fields</option>
+				<option>Static Methods</option>
 				<option>List Stream</option>
 				<option>Map Stream</option>
 				<option>Complex Stream</option>
@@ -73,6 +74,7 @@
 				<option>Lambda Static</option>
 				<option>Lambda Basic</option>
 				<option>Lambda Two Args</option>
+				<option>Lambda To Bean</option>
 				<option>Lambda Assignment</option>
 				<option>Lambda Nested</option>
 			</select>
