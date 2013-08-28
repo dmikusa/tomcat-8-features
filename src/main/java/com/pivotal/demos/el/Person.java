@@ -15,11 +15,11 @@ public class Person {
 	public Person() {
 	}
 
-	public Person(String name, String address, int age, Date date) {
+	public Person(String name, String address, int age, Date dob) {
 		this.name = name;
 		this.address = address;
 		this.age = age;
-		this.dob = date;
+		this.dob = dob;
 	}
 
 	@Override
