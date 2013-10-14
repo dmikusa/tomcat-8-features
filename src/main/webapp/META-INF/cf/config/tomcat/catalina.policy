@@ -193,6 +193,7 @@ grant {
 
     // Applications using WebSocket need to be able to access this package
     permission java.lang.RuntimePermission "accessClassInPackage.org.apache.catalina.websocket";
+    permission java.lang.RuntimePermission "accessClassInPackage.org.apache.tomcat.websocket";
     permission java.lang.RuntimePermission "accessClassInPackage.org.apache.tomcat.websocket.server";
     
     // Applications using Nbio Support need to be able to access this package
