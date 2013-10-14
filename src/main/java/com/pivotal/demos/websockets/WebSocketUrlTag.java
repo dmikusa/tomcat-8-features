@@ -18,7 +18,11 @@ public class WebSocketUrlTag extends TagSupport {
 	public int doEndTag() throws JspException {
 		HttpServletRequest req = (HttpServletRequest) pageContext.getRequest();
 		StringBuilder sb = new StringBuilder();
-		sb.append("ws://");
+		if (req.isSecure() || req.getServerPort() == 4443) {
+			sb.append("wss://");
+		} else {
+			sb.append("ws://");
+		}
 		sb.append(req.getServerName());
 		sb.append(":");
 		sb.append(req.getServerPort());
