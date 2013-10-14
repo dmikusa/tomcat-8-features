@@ -47,7 +47,7 @@
 			<h2>Tomcat 8 Demos</h2>
 			<nav class="breadcrumbs" style="margin-bottom: 1em;">
 			  <a href="<c:url value="/" />">Home</a>
-			  <a href="<c:url value="/non-blocking-io/" />">WebSockets</a>
+			  <a href="<c:url value="/websockets/" />">WebSockets</a>
 			</nav>
 		</div>
 	</div>
