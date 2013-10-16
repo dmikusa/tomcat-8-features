@@ -36,6 +36,7 @@
 				<ul>
 					<li><a href="<c:url value="/websockets/events.jsp" />">Event Viewer</a></li>
 					<li><a href="<c:url value="/websockets/csv.jsp" />">Encoder / Decoder Demo</a></li>
+					<li><a href="<c:url value="/websockets/protocol.jsp" />">Sub-protocol Demo</a></li>
 				</ul>
 			</div>
 		</div>
