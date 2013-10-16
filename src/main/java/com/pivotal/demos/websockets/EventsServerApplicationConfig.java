@@ -31,6 +31,7 @@ public class EventsServerApplicationConfig implements ServerApplicationConfig {
 	public Set<Class<?>> getAnnotatedEndpointClasses(Set<Class<?>> scanned) {
 		Set<Class<?>> cfgs = new HashSet<>();
 		cfgs.add(EventsAnnotationEndpoint.class);
+		cfgs.add(CsvEndpoint.class);
 		return cfgs;
 	}
 

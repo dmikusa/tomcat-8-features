@@ -35,6 +35,7 @@
 			<div class="panel" style="padding-left: 2em;" >
 				<ul>
 					<li><a href="<c:url value="/websockets/events.jsp" />">Event Viewer</a></li>
+					<li><a href="<c:url value="/websockets/csv.jsp" />">Encoder / Decoder Demo</a></li>
 				</ul>
 			</div>
 		</div>
