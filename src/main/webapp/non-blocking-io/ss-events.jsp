@@ -32,12 +32,16 @@
 		<div class="large-11 large-centered columns">
 			<div id="nbio">
 				<div class="row collapse">
-					<div class="large-1 columns">
+					<div class="large-2 columns">
 						<button id="run-demo" class="button prefix">Start Listening</button>					
 					</div>
+					<div class="large-2 columns">
+						<button id="stop-demo" class="button prefix">Stop Listening</button>
+					</div>
+					<div class="large-8 columns">&nbsp;</div>
 				</div>
 				<div>
-					<textarea id="result" style="height: 5em;" placeholder="Demo output will be shown here"></textarea>
+					<textarea id="result" style="height: 20em; width: 21em;" placeholder="Demo output will be shown here"></textarea>
 				</div>
 			</div>
 		</div>
@@ -50,6 +54,7 @@
 	</script>
 	
 	<script>
+		var source = null;
 		var result = $("#result");
 	
 		// appends text to the text area
@@ -65,13 +70,20 @@
 		}
 		
 		if (!! window.EventSource) {
-			$("#run-demo").click(function() {
-				var source = new EventSource('<c:url value="/non-blocking-io/ServerSentEventsServlet" />');
+			$("#run-demo").click(function(event) {
+				source = new EventSource('<c:url value="/non-blocking-io/ServerSentEventsServlet" />');
 				source.onmessage = function(event) {
 					result.val(appendText(event.data));
 					scrollTextAreaToBottom();
 				};
-			});	
+				$(event.target).attr("disabled", "disabled");
+				$("#stop-demo").removeAttr("disabled");
+			});
+			$("#stop-demo").click(function(event) {
+				source.close();
+				$(event.target).attr("disabled", "disabled");
+				$("#run-demo").removeAttr("disabled");
+			}).attr("disabled", "disabled");
 		} else {
 			$("#run-demo").attr("disabled", "disabled");
 			$("#result").val("Sorry, your browser does not support server-sent events.");
