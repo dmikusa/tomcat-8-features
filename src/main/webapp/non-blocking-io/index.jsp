@@ -37,6 +37,7 @@
 					<li><a href="<c:url value="/non-blocking-io/hello.jsp" />">Hello World</a></li>
 					<li><a href="<c:url value="/non-blocking-io/echo.jsp" />">The Repeater</a></li>
 					<li><a href="<c:url value="/non-blocking-io/random.jsp" />">Random Characters</a></li>
+					<li><a href="<c:url value="/non-blocking-io/ss-events.jsp" />">Server-Sent Events</a></li>
 					<li><a href="<c:url value="/non-blocking-io/terminal.jsp" />">Terminal</a></li>
 				</ul>
 			</div>
