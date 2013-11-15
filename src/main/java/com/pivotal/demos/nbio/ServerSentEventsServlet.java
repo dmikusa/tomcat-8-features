@@ -2,15 +2,15 @@ package com.pivotal.demos.nbio;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.servlet.AsyncContext;
-import javax.servlet.AsyncEvent;
-import javax.servlet.AsyncListener;
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.WriteListener;
@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 public class ServerSentEventsServlet extends HttpServlet {
 	private static final long serialVersionUID = 7678519506620543431L;
 	
-	private List<EventPusherWriteListener> clients = new ArrayList<>();
+	private List<EventPusherWriteListener> clients = Collections.synchronizedList(new ArrayList<EventPusherWriteListener>());
 	private ScheduledThreadPoolExecutor scheduledThreadPoolExecutor;
 	
 	@Override
@@ -33,9 +33,9 @@ public class ServerSentEventsServlet extends HttpServlet {
 		// Setup a scheduled thread pool executor.  This has two purposes.  First, it is
 		// 	  used to periodically create data.  Second, it is used to check if we have
 		//    data that can be pushed to the client.
-		scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(10);
+		scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(4);
 		scheduledThreadPoolExecutor.scheduleWithFixedDelay(
-				new TimeGenerator(clients), 0, 500, TimeUnit.MILLISECONDS);
+				new TimeGenerator(), 0, 500, TimeUnit.MILLISECONDS);
 	}
 	
 	@Override
@@ -80,7 +80,8 @@ public class ServerSentEventsServlet extends HttpServlet {
 	 */
 	private class EventPusherWriteListener implements WriteListener, Runnable {
 		private AsyncContext context;
-		private BlockingQueue<Long> data = new LinkedBlockingQueue<>();
+		private Queue<Long> data = new ConcurrentLinkedQueue<>();
+		private AtomicBoolean manualUpdateRequired = new AtomicBoolean(false);
 
 		public EventPusherWriteListener(AsyncContext context) {
 			this.context = context;
@@ -88,42 +89,36 @@ public class ServerSentEventsServlet extends HttpServlet {
 		
 		@Override
 		public void onWritePossible() throws IOException {
-			// Check if we can write data
 			ServletOutputStream output = context.getResponse().getOutputStream();
-			if (output.isReady()) {
-				// Yes, we can.  Check if we have any items in the queue to write.
-				try {
-					Long item = data.poll(100, TimeUnit.MILLISECONDS);
-					while (item != null && output.isReady()) {
-						// Yes, we have an item.  Write it.  Notice the "data:" that is added
-						//   to the beginning of the output.  This is part of the Server-Sent 
-						//   events format.
-						output.write(("data: " + item + "\n\n").getBytes());
-						// Check if we have any more data to send
-						item = data.poll(100, TimeUnit.MILLISECONDS);
-					}
-					// We also flush so that data is sent to the client right away.
-					output.flush();	
-					// If we're still able to send data (isRead() is true), but we do not 
-					//    have any more data to send, it's our job to make sure onWritePossible 
-					//    is called again.  We do this by scheduling this task to be called one
-					//    second from now.
-					// If isReady() is false then then the container will call onWritePossible so 
-					//    we do not need to schedule it to be called.
-					if (output.isReady()) {
-						scheduledThreadPoolExecutor.schedule(this, 2, TimeUnit.SECONDS);
-					}
-				} catch (InterruptedException e) {
-					// Interrupted, don't reschedule
-					getServletContext().log("Interrupted waiting for data", e);
-				}
+			// Check if we have data to write & that we can write
+			while (data.peek() != null && output.isReady()) {
+				// We have data and we can write, so let's do it!
+				//   Notice the "data:" that is added to the beginning of the 
+				//   output.  This is part of the Server-Sent events format.
+				output.write(("data: " + data.poll() + "\n\n").getBytes());
 			}
+			// Flush so that data is sent to the client right away.
+			output.flush();
+			// If we're still able to send data (isReady() is true), but we do not 
+			//    have any more data to send, it's our job to make sure onWritePossible 
+			//    is called again.  We do this by setting the manualUpdateRequired flag
+			//    to true.
+			// If isReady() is false then then the container will call onWritePossible so 
+			//    we do not need to manually call it.
+			if (output.isReady()) {
+				manualUpdateRequired.set(true);
+			}
+			// Log the thread which called this method, just as an FYI
+			getServletContext().log("onWritePossible called by [" + Thread.currentThread().getName() + "]");
 		}
 		
 		@Override
 		public void onError(Throwable t) {
-			// log the error and complete our work
+			// log the error
 			getServletContext().log("Async Error", t);
+			// remove connection from clients list
+			clients.remove(this);
+			// complete our work
 			context.complete();
 		}
 
@@ -138,9 +133,16 @@ public class ServerSentEventsServlet extends HttpServlet {
 			}
 		}
 		
-		// Called by the data generator to add data to the queue
+		// Called by a data generator to add data to the queue.  Also checks to see
+		//   if we need to manually call onWritePossible, using the manualUpdateRequired flag.
+		//   If we need to call it, we schedule the task so the call to onWritePossible does
+		//   not happen in the data generator thread.
 		public void publish(Long item) {
 			data.add(item);
+			if (manualUpdateRequired.get()) {
+				manualUpdateRequired.set(false);
+				scheduledThreadPoolExecutor.execute(this);
+			}
 		}
 	}
 	
@@ -149,10 +151,10 @@ public class ServerSentEventsServlet extends HttpServlet {
 	 */
 	public class TimeGenerator implements Runnable {
 		
-		List<EventPusherWriteListener> clients;
+		private int count = 0;
+		private final long firstRun = System.currentTimeMillis();
 		
-		public TimeGenerator(List<EventPusherWriteListener> clients) {
-			this.clients = clients;
+		public TimeGenerator() {
 		}
 		
 		@Override
@@ -160,8 +162,17 @@ public class ServerSentEventsServlet extends HttpServlet {
 			// Generates a piece of data, in this case the current time stamp, and sends it
 			//    to each of the clients.
 			Long item = System.currentTimeMillis();
-			for (EventPusherWriteListener client : clients) {
-				client.publish(item);
+			synchronized (clients) {
+				for (EventPusherWriteListener client : clients) {
+					client.publish(item);
+				}
+			}
+			// Keep some stats on how much data we generate and our clients
+			count++;
+			if (count % 10 == 9) {
+				getServletContext().log("Generated [" + count + "] messages at a rate of [" + 
+						(count / ((System.currentTimeMillis() - firstRun) / 1000.0)) + "] messages per second.");
+				getServletContext().log("Client count [" + clients.size() + "]");
 			}
 		}
 	}
