@@ -60,8 +60,8 @@
 		// appends text to the text area
 		function appendText(textToAppend) {
 			return function(i, val) {
-				return val + "\n" + textToAppend;
-			}
+				return ((val) ? val + "\n" : "") + textToAppend;
+			};
 		}
 		
 		// move scroll bar to bottom of text area 
