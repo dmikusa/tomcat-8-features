@@ -16,12 +16,12 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Reads in the complete request, buffering it, then writes it out
  */
-@WebServlet(urlPatterns="/non-blocking-io/EchoNbioServlet", asyncSupported=true)
-public class EchoNbioServlet extends HttpServlet  {
+@WebServlet(urlPatterns="/non-blocking-io/BadEchoNbioServlet", asyncSupported=true)
+public class BadEchoNbioServlet extends HttpServlet  {
 
 	private static final long serialVersionUID = -6167956299941229517L;
 
-	private static class EchoReadListener implements ReadListener {
+	private class EchoReadListener implements ReadListener {
 		private AsyncContext context;
 		private StringBuilder data = new StringBuilder();
 
@@ -31,6 +31,12 @@ public class EchoNbioServlet extends HttpServlet  {
 
 		public void onDataAvailable() throws IOException {
 			// 3. Read all the data that is available, may be called multiple times
+			//   Note: this example buffers all of the input data prior to writing it back to
+			//     the client.  This works for small examples but could cause problems if the
+			//     client sent a huge amount of data.  For an example of this, run the Echo
+			//     client from the command line and watch the heap usage with jconsole or jvisualvm.
+			//     You'll see it spike by a few hundred megs.  For a better way see
+			//     EchoNonBufferingNbioServlet.
 			ServletInputStream input = context.getRequest().getInputStream();
 			try {
 	            byte[] b = new byte[8192];
@@ -41,11 +47,11 @@ public class EchoNbioServlet extends HttpServlet  {
 	                    break;
 	                }
 	                data.append(new String(b, 0, read));
-	                System.out.println("Buffering [" + data.length() + "] characters");
+	                // uncomment to see how much data is being buffered
+	                //getServletContext().log("Buffering [" + data.length() + "] characters");
 	            } while (input.isReady());
 	        } catch (Exception ex) {
-	            ex.printStackTrace(System.err);
-	            context.complete();
+	            onError(ex);
 	        }
 		}
 
@@ -56,13 +62,13 @@ public class EchoNbioServlet extends HttpServlet  {
 		}
 
 		public void onError(Throwable ex) {
-			ex.printStackTrace(System.err);
+			getServletContext().log("read error", ex);
 			context.complete();
 		}
 
 	}
 
-	private static class EchoWriteListener implements WriteListener {
+	private class EchoWriteListener implements WriteListener {
 		private AsyncContext context;
 		private String data;
 
@@ -82,8 +88,8 @@ public class EchoNbioServlet extends HttpServlet  {
 			context.complete();
 		}
 
-		public void onError(Throwable throwable) {
-			throwable.printStackTrace(System.err);
+		public void onError(Throwable ex) {
+			getServletContext().log("write error", ex);
 			context.complete();
 		}
 	}
@@ -92,6 +98,7 @@ public class EchoNbioServlet extends HttpServlet  {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		// 1. Start Async
 		AsyncContext context = req.startAsync();
+		context.setTimeout(0);
 
 		// 2. Add Read Listener to get user's input
 		context.getRequest().getInputStream().setReadListener(new EchoReadListener(context));

@@ -19,32 +19,39 @@ public class EchoClient {
 		EchoClient echoClient = new EchoClient();
 		Map<String, List<String>> resHeaders = new HashMap<>();
 
-		System.out.println("Sending nothing.  Response [" +
-				echoClient.doPost(false, new EmptyBytesStreamer(), resHeaders, null) +
-			"]");
+		System.out.println("Sending nothing.");
+		System.out.println("\tResponse [" +
+				echoClient.doPost(false, new EmptyBytesStreamer(), resHeaders, null) + "]");
 		pauseRun();
 
-		System.out.println("Sending 'Hello World!'.  Response [" +
-				echoClient.doPost(false, new HelloBytesStreamer(), resHeaders, null) +
-			"]");
+		System.out.println("Sending 'Hello World!'.");
+		System.out.println("\tResponse [" +
+				echoClient.doPost(false, new HelloBytesStreamer(), resHeaders, null) + "]");
 		pauseRun();
 
-		System.out.println("Sending 10 random characters.  Response [" +
-				echoClient.doPost(true, new RandomBytesStreamer(), resHeaders, null) +
-			"]");
+		System.out.println("Sending 10 random characters.");
+		System.out.println("\tResponse [" +
+				echoClient.doPost(false, new RandomBytesStreamer(), resHeaders, null) + "]");
 		pauseRun();
 
-		System.out.println("Sending 512 random characters.  Response [" +
-				echoClient.doPost(false, new RandomBytesStreamer(512, 32, 1), resHeaders, null) +
-			"]");
+		System.out.println("Sending 512 random characters.");
+		System.out.println("\tResponse [" +
+				echoClient.doPost(false, new RandomBytesStreamer(512, 32, 0), resHeaders, null) + "]");
 		pauseRun();
 
-		tmp = echoClient.doPost(false, new RandomBytesStreamer(1_000_000, 131072, 1), resHeaders, null);
-		System.out.println("Sending a million random characters.  Got  [" + tmp.length() + "] characters back.");
+		System.out.println("Sending a million random characters.");
+		tmp = echoClient.doPost(false, new RandomBytesStreamer(1_000_000, 131072, 0), resHeaders, null);
+		System.out.println("\tGot  [" + tmp.length() + "] characters back.");
 		pauseRun();
 
-		tmp = echoClient.doPost(true, new RandomBytesStreamer(1048576, 131072, 1), resHeaders, null);
-		System.out.println("Streaming a million random characters.  Got [" + tmp.length() + "] characters back.");
+		System.out.println("Streaming a million random characters.");
+		tmp = echoClient.doPost(true, new RandomBytesStreamer(1048576, 131072, 0), resHeaders, null);
+		System.out.println("\tGot [" + tmp.length() + "] characters back.");
+		pauseRun();
+
+		System.out.println("Streaming 20 million random characters.");
+		tmp = echoClient.doPost(true, new RandomBytesStreamer(1048576 * 10, 1048576 * 2, 0), resHeaders, null);
+		System.out.println("\tGot [" + tmp.length() + "] characters back.");
 	}
 
 	private static void pauseRun() {
@@ -56,11 +63,11 @@ public class EchoClient {
 	}
 
 	private static final String DEFAULT_PATH =
-			"http://localhost:8080/tomcat-8-demos/non-blocking-io/EchoNbioServlet";
+			"http://localhost:8080/tomcat-8-demos/non-blocking-io/BadEchoNbioServlet";
 
 	public String doPost(boolean stream, BytesStreamer streamer,
             Map<String, List<String>> reqHead,
-            Map<String, List<String>> resHead) throws IOException
+            Map<String, List<String>> resHead) throws IOException, Exception
     {
         URL url = new URL(DEFAULT_PATH);
         HttpURLConnection connection =
@@ -87,7 +94,7 @@ public class EchoClient {
                 connection.setChunkedStreamingMode(1024);
             }
         }
-
+        System.out.println("\tConnecting...");
         connection.connect();
 
         // Write the request body
@@ -110,7 +117,9 @@ public class EchoClient {
             }
         }
 
+        System.out.println("\tWaiting for response code...");
         int rc = connection.getResponseCode();
+        System.out.println("\tWaiting for headers");
         if (resHead != null) {
             Map<String, List<String>> head = connection.getHeaderFields();
             resHead.putAll(head);
@@ -126,9 +135,10 @@ public class EchoClient {
         BufferedInputStream bis = null;
         try {
             bis = new BufferedInputStream(is);
-            byte[] buf = new byte[2048];
+            byte[] buf = new byte[8196];
             int rd = 0;
             while((rd = bis.read(buf)) > 0) {
+//            	System.out.println("Read back [" + rd + "]");
                 sb.append(new String(buf, "utf-8"));
             }
         } finally {
@@ -140,6 +150,11 @@ public class EchoClient {
                 }
             }
         }
+
+        if (rc >= 400) {
+            System.out.println("Error Occurred.  Response was [" + sb + "]");
+        }
+
         return sb.toString();
 	}
 
@@ -189,6 +204,7 @@ public class EchoClient {
 			this.total = total;
 			this.available = total;
 			this.chunkSize = chunkSize;
+			this.sleep = sleep;
 		}
 
 		public int getLength() {
@@ -209,7 +225,7 @@ public class EchoClient {
 			}
 			if (sleep > 0) {
 				try {
-					System.out.println("Sleeping...");
+//					System.out.println("Sleeping...");
 					Thread.sleep(sleep * 1000);
 				} catch (InterruptedException ex) {
 					// ignore
