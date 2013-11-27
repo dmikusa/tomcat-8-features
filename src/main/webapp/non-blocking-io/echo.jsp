@@ -58,7 +58,7 @@
 		var nbio = $("#nbio");
 		nbio.find("#run-demo").click(function(e) {
             e.preventDefault();
-            $.post('<c:url value="/non-blocking-io/EchoNbioServlet" />',
+            $.post('<c:url value="/non-blocking-io/AsyncEchoNbioServlet" />',
            		nbio.find("#data").val(),
                 function(data) {
             		nbio.find("#result").text("Server Says: " + data);
