@@ -7,7 +7,7 @@ import javax.websocket.DecodeException;
 import javax.websocket.Decoder;
 import javax.websocket.EndpointConfig;
 
-public class CsvDecoder implements Decoder.Text<List> {
+public class CsvDecoder implements Decoder.Text<List<String>> {
 
 	@Override
 	public void init(EndpointConfig endpointConfig) {
@@ -17,9 +17,8 @@ public class CsvDecoder implements Decoder.Text<List> {
 	public void destroy() {
 	}
 
-	// Must use List and not List<String>, workaround for Tomcat NPE
 	@Override
-	public List decode(String s) throws DecodeException {
+	public List<String> decode(String s) throws DecodeException {
 		return Arrays.asList(s.split(","));
 	}
 

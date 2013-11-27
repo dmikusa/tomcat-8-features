@@ -3,7 +3,6 @@ package com.pivotal.demos.websockets;
 import java.io.IOException;
 import java.util.List;
 
-import javax.websocket.OnClose;
 import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
 import javax.websocket.Session;
@@ -24,15 +23,8 @@ public class CsvEndpoint {
 		}
 	}
 
-	// called on close, we do nothing.
-	@OnClose
-	public void onClose() {
-		// Clean up resources here
-	}
-
-	// Must use List and not List<String>, workaround for Tomcat NPE
 	@OnMessage
-	public void onMessage(Session session, List messageItems) {
+	public void onMessage(Session session, List<String> messageItems) {
 		try {
 			session.getBasicRemote().sendText("Echo List " + messageItems);
 		} catch (IOException e) {

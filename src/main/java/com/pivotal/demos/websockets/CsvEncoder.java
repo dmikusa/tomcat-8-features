@@ -6,7 +6,7 @@ import javax.websocket.EncodeException;
 import javax.websocket.Encoder;
 import javax.websocket.EndpointConfig;
 
-public class CsvEncoder implements Encoder.Text<List> {
+public class CsvEncoder implements Encoder.Text<List<String>> {
 
 	@Override
 	public void init(EndpointConfig endpointConfig) {
@@ -16,9 +16,8 @@ public class CsvEncoder implements Encoder.Text<List> {
 	public void destroy() {
 	}
 
-	// Must use List and not List<String>, workaround for Tomcat NPE
 	@Override
-	public String encode(List list) throws EncodeException {
+	public String encode(List<String> list) throws EncodeException {
 		StringBuilder sb = new StringBuilder();
 		for (Object item : list) {
 			sb.append((String) item);
