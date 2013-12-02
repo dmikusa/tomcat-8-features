@@ -67,6 +67,7 @@ public class AsyncEchoNbioServlet extends HttpServlet {
 
 		@Override
 		public void onAllDataRead() throws IOException {
+			onWritePossible();
 		}
 
 		@Override
