@@ -63,7 +63,7 @@ public class EchoClient {
 	}
 
 	private static final String DEFAULT_PATH =
-			"http://localhost:8080/tomcat-8-demos/non-blocking-io/BadEchoNbioServlet";
+			"http://localhost:8080/tomcat-8-demos/non-blocking-io/AsyncEchoNbioServlet";
 
 	public String doPost(boolean stream, BytesStreamer streamer,
             Map<String, List<String>> reqHead,
