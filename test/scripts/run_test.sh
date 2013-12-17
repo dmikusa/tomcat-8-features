@@ -35,9 +35,14 @@ while [ ! -e "$PARENT_DIR/pom.xml" ]; do
     PARENT_DIR=$(dirname "$PARENT_DIR") 
 done
 
+# Extract data file to temp file
+TMP_DIR=$(mktemp -dt "tc-test")
+TMP_FILE="$TMP_DIR/data.txt"
+gunzip -c "$PARENT_DIR/test/data/${SIZE}m.txt.gz" > "$TMP_FILE"
+
 # Send the requests and check if the resulting byte count matches
 for (( i=1; i<=$LOOP; i++)); do
-    CHECK_BYTES=$(gunzip -c "$PARENT_DIR/test/data/${SIZE}m.txt.gz" | curl -s -d @- "$URL" | wc -c)
+    CHECK_BYTES=$(curl -s -d "@$TMP_FILE" "$URL" | wc -c)
     if [ "$SIZE_BYTES" -eq "$CHECK_BYTES" ]; then
         echo "Request #$i: OK"
     else
@@ -45,3 +50,7 @@ for (( i=1; i<=$LOOP; i++)); do
     fi
 done
 
+# Clean up tmp directory
+if [ -d "$TMP_DIR" ]; then
+    rm -rf "$TMP_DIR"
+fi
