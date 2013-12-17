@@ -30,7 +30,7 @@ fi
 SIZE_BYTES=$(expr $SIZE \* 1024 \* 1024)
 
 # Search for the root directory
-PARENT_DIR=$(dirname "$(pwd)")
+PARENT_DIR=$(pwd)
 while [ ! -e "$PARENT_DIR/pom.xml" ]; do
     PARENT_DIR=$(dirname "$PARENT_DIR") 
 done
