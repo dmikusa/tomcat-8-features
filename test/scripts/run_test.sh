@@ -13,10 +13,11 @@
 #    Date:  2013-12-16
 #############################################################
 # Default URL used by script
-URL=http://localhost:8080/tomcat-8-demos/blocking-io/BlockingEchoServlet
+DEFAULT_URL=http://localhost:8080/tomcat-8-demos/blocking-io/BlockingEchoServlet
 #############################################################
 LOOP=$1
 SIZE=$2
+URL=$3
 
 if [ -z "$LOOP" ]; then
     LOOP=1
@@ -24,6 +25,10 @@ fi
 
 if [ -z "$SIZE" ]; then
     SIZE=10
+fi
+
+if [ -z "$URL" ]; then
+    URL="$DEFAULT_URL"
 fi
 
 # Calculate our expected result
