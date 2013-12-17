@@ -1,6 +1,7 @@
 package com.pivotal.demos.nbio;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import javax.servlet.AsyncContext;
@@ -23,10 +24,10 @@ public class AsyncEchoNbioServlet extends HttpServlet {
 	public static final int BUFFER_SIZE = 8 * 1024;
 
 	@Override
-	protected void service(HttpServletRequest request,
-			HttpServletResponse response) throws ServletException, IOException {
+	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		AsyncContext asyncContext = request.startAsync(request, response);
 		asyncContext.setTimeout(0);
+
 		Echoer echoer = new Echoer(asyncContext);
 		response.getOutputStream().setWriteListener(echoer);
 		request.getInputStream().setReadListener(echoer);
@@ -35,6 +36,8 @@ public class AsyncEchoNbioServlet extends HttpServlet {
 	private class Echoer implements ReadListener, WriteListener {
 		private byte[] buffer = new byte[BUFFER_SIZE];
 		private long totalRead = 0;
+		private long totalWrote = 0;
+		private long totalBuffered = 0;
 		private LinkedBlockingQueue<byte[]> queue = new LinkedBlockingQueue<>();
 
 		private AsyncContext asyncContext;
@@ -52,21 +55,23 @@ public class AsyncEchoNbioServlet extends HttpServlet {
 			while (input.isReady()) {
 				int read = input.read(buffer);
 				totalRead += read;
-				getServletContext().log(
-						"read and wrote [" + read + "] total [" + totalRead
-								+ "]");
 
 				if (output.isReady()) {
+					totalWrote += read;
 					output.write(buffer, 0, read);
 				} else {
-					queue.add(buffer);
-					buffer = new byte[BUFFER_SIZE];
+					totalBuffered += read;
+					queue.add(Arrays.copyOf(buffer, read));
 				}
 			}
 		}
 
 		@Override
 		public void onAllDataRead() throws IOException {
+			getServletContext().log("Read Done! Total Wrote [" + totalWrote + "]  " +
+								               "Total Read [" + totalRead + "]  " +
+								               "Total Buffered [" +	totalBuffered + "]  " +
+								               "Buffer size [" + queue.size() + "]");
 			onWritePossible();
 		}
 
