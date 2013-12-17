@@ -47,11 +47,14 @@ gunzip -c "$PARENT_DIR/test/data/${SIZE}m.txt.gz" > "$TMP_FILE"
 
 # Send the requests and check if the resulting byte count matches
 for (( i=1; i<=$LOOP; i++)); do
-    CHECK_BYTES=$(time curl -s -d "@$TMP_FILE" "$URL" | wc -c)
+    time curl -s -d "@$TMP_FILE" "$URL" > "$TMP_DIR/result.txt"
+    CHECK_BYTES=$(wc -c "$TMP_DIR/result.txt" | sed 's/^ *//g' | cut -f 1 -d ' ')
     if [ "$SIZE_BYTES" -eq "$CHECK_BYTES" ]; then
         echo "Request #$i: OK"
     else
-        echo "Request #$i: FAIL"
+        echo "Request #$i: FAIL [$SIZE_BYTES] vs [$CHECK_BYTES]"
+        echo "Details at [$TMP_DIR/result.txt]."
+        exit -1
     fi
 done
 
