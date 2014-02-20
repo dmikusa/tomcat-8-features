@@ -1,4 +1,4 @@
-package com.pivotal.demos.nbio.perf;
+package com.pivotal.demos.perf;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
