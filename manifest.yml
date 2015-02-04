@@ -3,7 +3,6 @@ applications:
 - name: tomcat-8-demos
   memory: 512M
   instances: 1
-  host: tomcat-8-demos
-  domain: cfapps.io
   path: ./target/tomcat-8-demos
-  buildpack: https://github.com/dmikusa-pivotal/cf-tomcat-8-build-pack.git
+  services:
+  - papertrail-logs
