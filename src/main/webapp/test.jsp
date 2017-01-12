@@ -52,6 +52,26 @@
 		</div>
 	</div>
 
+    <div class="row">
+        <div class="large-12 columns">
+            <h3>Servlet Request Object</h3>
+            <%
+                out.println("Auth Type: " + request.getAuthType() + "<br/>");
+                out.println("Context Path: " + request.getContextPath() + "<br/>");
+                out.println("Method: " + request.getMethod() + "<br/>");
+                out.println("Remote User: " + request.getRemoteUser() + "<br/>");
+                out.println("Query String: " + request.getQueryString() + "<br/>");
+                out.println("Request URI: " + request.getRequestURI() + "<br/>");
+                out.println("Servlet Path: " + request.getServletPath() + "<br/>");
+                out.println("Remote Address: " + request.getRemoteAddr() + "<br/>");
+                out.println("Remote Port: " + request.getRemotePort() + "<br/>");
+                out.println("Secure?: " + request.isSecure() + "<br/>");
+                out.println("Server Name: " + request.getServerName() + "<br/>");
+                out.println("Server Port: " + request.getServerPort() + "<br/>");
+            %>
+        </div>
+    </div>
+
 	<script>
 		document.write('<script src='
 				+ ('__proto__' in {} ? '<c:url value="/js/vendor/zepto"/>' : '<c:url value="/js/vendor/jquery"/>')
